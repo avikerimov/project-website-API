@@ -6,6 +6,11 @@ const { Ad } = require("../models/ad");
 const auth = require("../middleware/auth");
 const router = express.Router();
 
+const getAds = async (adsArray) => {
+  const ads = await Ad.find({ bizNumber: { $in: adsArray } });
+  return ads;
+};
+
 router.get("/ads", auth, async (req, res) => {
   if (!req.user) return res.status(401).send("Access Denied");
   const ads = await Ad.find({})
@@ -16,10 +21,10 @@ router.get("/my-favorite-ads", auth, async (req, res) => {
   if (!req.user) return res.status(401).send("Access Denied");
   try{
     const user = await User.findById(req.user._id).populate('favorites');
-    console.log("user.favorites:" + user.favorites);
+
     res.send(user.favorites);
   } catch (ex) {
-    console.log(ex);
+
     res.status(404).send('Invalid AD id')
   }
 });
@@ -28,11 +33,10 @@ router.patch("/favorite-ads/:adId", auth, async (req, res) => {
   try{
     let userId = req.user._id;
     let adId = req.params.adId;
-    console.log("userId: " + userId);
-    console.log("adId: " + adId);
+
 
     const user = await User.findOne({_id: userId});
-    console.log("user: " + user);
+
 
     if (user.favorites.includes(adId)){
       await User.updateOne({ _id: userId }, { $pull: { favorites: adId } });

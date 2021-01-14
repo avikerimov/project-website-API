@@ -84,7 +84,6 @@ function validateAd(ad) {
       .regex(/^0[2-9]\d{7,8}$/),
     companyLogo: Joi.string().min(11).max(1024),
     productImg: Joi.string().min(11).max(1024),
-    isFavorite:bool()
   });
 
   return schema.validate(ad);
